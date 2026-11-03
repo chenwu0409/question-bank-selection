@@ -37,7 +37,7 @@ description: Select, verify, package exam questions from chujuan.cn, jyeoo.com, 
 
 ## 脚本
 
-全部纯标准库（Python 3.14），不装第三方包。
+全部纯标准库（Python 3.14），不装第三方包。`push_lark.py` 额外依赖 `lark-cli`（凭据由环境外部注入，无需 login）。
 
 | 脚本 | 用途 | 关键参数 |
 |---|---|---|
@@ -51,13 +51,14 @@ description: Select, verify, package exam questions from chujuan.cn, jyeoo.com, 
 | `scripts/dedupe.py` | 与 items.ndjson 查重（题干指纹 + 关键词重叠） | `--items` `--candidates` |
 | `scripts/build_html.py` | 由清单 JSON 生成学生版/答案版 HTML，并自检零答案泄漏 | `--manifest` `--outdir` |
 | `scripts/verify_calc.py` | 独立验算工具（分数精确：二次函数/面积最值/杠杆平衡） | `--case` |
+| `scripts/push_lark.py` | P9-b 飞书入库：写题目库/检索记录/训练任务三表，幂等+回查+题图上传 | `--check` `--manifest` `--dry-run` `--out` |
 
 CDP 相关脚本要求专用 Chrome 已在 9222 运行：`python scripts/launch_chrome.py`（沙箱内需在沙箱外启动，否则进程被回收）。
 沙箱内启动 Chrome 会被回收，改用 `dangerouslyDisableSandbox` + `Invoke-WmiMethod -Class Win32_Process -Name Create`。
 
 ## 流程（P0–P9 摘要）
 
-P0 预检 → P1 知识点转关键词 → P2 检索出候选（每训练点 ≥8 道，中等难度 ≥40%）→ P3 批量抓详情（单题 2 次失败即弃）→ P4 题干题图解析（装置图放大 4x 复核）→ P5 查重 → P6 独立验算 → P7 匹配遴选（人工卡点，不为换而换）→ P8 学生版/答案版产出 → P9 入库建任务。
+P0 预检 → P1 知识点转关键词 → P2 检索出候选（每训练点 ≥8 道，中等难度 ≥40%）→ P3 批量抓详情（单题 2 次失败即弃）→ P4 题干题图解析（装置图放大 4x 复核）→ P5 查重 → P6 独立验算 → P7 匹配遴选（人工卡点，不为换而换）→ P8 学生版/答案版产出 → P9 入库建任务 → **P9-b 飞书多维表格入库（必做，`scripts/push_lark.py`）**。
 
 每步的输入/输出/判定标准/预算耗时见 `references/三站检索SOP.md` 第一章。
 
@@ -68,8 +69,9 @@ P0 预检 → P1 知识点转关键词 → P2 检索出候选（每训练点 ≥
 3. **答案版 HTML**：含答案、验算过程、非一手警示框。
 4. **题图目录**：本地 PNG，供 HTML 内嵌引用。
 5. **入库**：`items.ndjson` 追加 TM-0000XX 记录（题干指纹 + 去重键）。
+6. **飞书入库（必做）**：飞书多维表格才是正式题库，items.ndjson 只是本地快照。用 `scripts/push_lark.py` 写三张表（题目库/检索与选题记录/训练任务库），落点、table_id、字段与判定见 `references/三站检索SOP.md` P9-b。凭据不可用时明确报告「飞书未入库」，不静默跳过。
 
-学生版/答案版 HTML 骨架见 `assets/`。
+学生版/答案版 HTML 骨架见 `assets/`；push_lark 输入模板见 `assets/lark_manifest_template.json`。
 
 ## 常见坑
 
@@ -84,6 +86,8 @@ P0 预检 → P1 知识点转关键词 → P2 检索出候选（每训练点 ≥
 - PowerShell `-File` 读含中文路径的 .ps1 会乱码 → 逻辑一律写 .py 文件执行。
 - 内联 `python -c` 引号易碎 → 一律写 .py 文件。
 - 单次网络超时不等于站点有滑块 → 预检的有效样本 ≥2 才下结论。
+- `lark-cli api --page-all` 输出混入 `[page N] fetching...` 进度行，JSON 解析必炸 → 分页用 `--params '{"page_size":500,"page_token":...}'`（push_lark.py 已内置）。
+- `lark-cli auth status` 在凭据外部注入环境报 validation 错，不代表凭据坏 → 连通性以 `push_lark.py --check` 为准。
 
 ## 实测基线（2026-11-03，脚本已逐个跑通）
 
@@ -97,5 +101,6 @@ P0 预检 → P1 知识点转关键词 → P2 检索出候选（每训练点 ≥
 | `dedupe.py` | 同题干判「重复」1.00；改写题干判「全新」 |
 | `verify_calc.py` | 四例全通过，分数精确 |
 | `build_html.py` | 正样本 PASS；注入「答案为 4 N」的负样本 FAIL 并以退出码 2 拦截 |
+| `push_lark.py` | `--check` 四表全 PASS（题目库42/任务库35/检索记录0/知识点库118）；`--dry-run` 正确判已存在题为 skip、知识点/去重键/任务号全部解析成 record_id，未写库 |
 
-未覆盖（如实）：菁优网登录后完整【解答】正文、菁优广东覆盖度抽样、出卷网免费 vs VIP 答案可见性差异、`launch_chrome.py` 沙箱内首次启动分支（沙箱会回收进程，属已知限制）。
+未覆盖（如实）：菁优网登录后完整【解答】正文、菁优广东覆盖度抽样、出卷网免费 vs VIP 答案可见性差异、`launch_chrome.py` 沙箱内首次启动分支（沙箱会回收进程，属已知限制）、`push_lark.py` 正式写入分支（dry-run 已验证，正式写入涉及线上数据需用户批准后实跑一轮）。

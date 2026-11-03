@@ -1,7 +1,7 @@
 # question-bank-selection
 
 > 从中文题库站检索、筛选、核验中考题目，产出「学生版 + 答案版 + 清单」三件套。
-> 覆盖出卷网、菁优网、二一组卷网三站，全部脚本仅依赖 Python 标准库。
+> 覆盖出卷网、菁优网、二一组卷网三站，全部脚本仅依赖 Python 标准库（`push_lark.py` 额外需要 `lark-cli`）。
 
 ## 30 秒上手
 
@@ -49,6 +49,7 @@ git clone https://github.com/chenwu0409/question-bank-selection.git <你的 skil
 | Chrome / Edge | 仅出卷网登录态与菁优网需要；用 `--remote-debugging-port=9222` 启动 |
 | 账号 | 出卷网需登录一次（免费账号即可），登录态存在专用 profile 里复用；二一检索免登录；菁优网游客可读详情页 |
 | 沙箱 | 沙箱内启动的 Chrome 会被进程回收 → 需在沙箱外启动，或 `Invoke-WmiMethod -Class Win32_Process -Name Create` |
+| lark-cli | 仅 `push_lark.py`（P9-b 飞书入库）需要；凭据由环境外部注入，无需 `auth login`；表落点与 table_id 见 `references/三站检索SOP.md` P9-b（需按自己的 Base 修改脚本头部常量） |
 
 ## 目录结构
 
@@ -68,8 +69,10 @@ scripts/                          # 黑盒脚本，只用 --help，不读源码
   dedupe.py                       # 查重：题干指纹 + 数字/关键词重合
   verify_calc.py                  # 独立验算：分数精确（杠杆/二次函数/面积极值/鞋带）
   build_html.py                   # 清单 JSON → 学生版/答案版 HTML + 零答案泄漏自检
+  push_lark.py                    # P9-b 飞书入库：题目库/检索记录/训练任务三表，幂等+回查+题图上传
 assets/
   manifest_template.json          # build_html.py 输入格式样例
+  lark_manifest_template.json     # push_lark.py 输入格式样例
 ```
 
 ## 脚本用法
@@ -96,6 +99,11 @@ python scripts/probe_jyeoo.py --shoti a101ba79-1514-415d-9e5f-632525b132f8 --fig
 python scripts/dedupe.py --items items.ndjson --candidates pool.json
 python scripts/verify_calc.py --case lever --G 2 --n1 3 --L1 2 --L2 3
 python scripts/build_html.py --manifest manifest.json --outdir ./out
+
+# P9-b 飞书入库（需 lark-cli；--check 验证连通，--dry-run 预览不落库）
+python scripts/push_lark.py --check
+python scripts/push_lark.py --manifest lark.json --dry-run
+python scripts/push_lark.py --manifest lark.json --out push_result.json
 ```
 
 每个脚本都支持 `--help`。
@@ -107,6 +115,7 @@ python scripts/build_html.py --manifest manifest.json --outdir ./out
 3. **答案版 HTML** —— 含答案、验算过程、非一手警示框
 4. **题图目录** —— 本地 PNG，供 HTML 内嵌
 5. **入库** —— `items.ndjson` 追加 `TM-0000XX` 记录（题干指纹 + 去重键）
+6. **飞书入库（必做）** —— `push_lark.py` 写多维表格三张表（题目库/检索与选题记录/训练任务库）；飞书才是正式题库，items.ndjson 只是本地快照；凭据不可用时明确报告「飞书未入库」
 
 ## 硬约束
 
@@ -124,6 +133,8 @@ python scripts/build_html.py --manifest manifest.json --outdir ./out
 - 菁优网静态请求拿不到题链；`/math3/ques/` 是导航页不是题目列表页
 - CDP `Runtime.evaluate` 顶层不接受 `return`；标签页渲染进程卡死会永久超时（用 `pick_tab()` 先探测）
 - 单次网络超时不等于站点有滑块 → 预检有效样本 ≥2 才下结论
+- `lark-cli api --page-all` 输出混入进度行会破坏 JSON 解析 → 分页一律用 `--params '{"page_size":500,"page_token":...}'`（push_lark.py 已内置）
+- `lark-cli auth status` 在凭据外部注入环境报 validation 错，不代表凭据坏 → 连通性以 `push_lark.py --check` 为准
 
 完整清单见 `references/站点矩阵.md`。
 
@@ -133,6 +144,7 @@ python scripts/build_html.py --manifest manifest.json --outdir ./out
 - 菁优网广东/广州覆盖度未系统抽样
 - 出卷网免费账号 vs VIP 的答案可见性差异未比对
 - 触发准确率未实测（better-skill 五维标尺里的触发率项）
+- `push_lark.py` 正式写入分支未实跑（`--check` 与 `--dry-run` 已验证；正式写入涉及线上数据，需用户批准后实跑一轮）
 
 ## 许可
 

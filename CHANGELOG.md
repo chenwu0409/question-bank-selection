@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.1.0 — 2026-11-03
+
+补齐 P9-b 飞书入库：此前 SKILL.md 与 references/三站检索SOP.md 只写到 items.ndjson 本地入库，飞书多维表格（正式题库）的入库步骤仅存在于外部文档，按 skill 执行会漏掉。
+
+### 新增
+
+- **scripts/push_lark.py** —— P9-b 飞书入库脚本：写题目库/检索与选题记录/训练任务库三张表；按去重键幂等（已存在即跳过）、自动编号回查（题目ID/任务ID 服务端分配后取回）、知识点/题目/任务一律解析成 record_id 真关联、题图自动补传；`--check` 验四表连通，`--dry-run` 预览不落库；失败输出 FAIL + 原因并退出码非 0。
+- **assets/lark_manifest_template.json** —— push_lark.py 输入模板（questions / search_log / tasks 三段）。
+
+### 变更
+
+- **SKILL.md** —— 流程摘要加 P9-b；交付物加第 6 条「飞书入库（必做）」；脚本表加 push_lark.py；常见坑加 2 条 lark-cli 实测坑（`api --page-all` 进度行破坏 JSON、`auth status` 在凭据外部注入环境不可用）；实测基线加 push_lark 行。
+- **references/三站检索SOP.md** —— P9 节后补完整 **P9-b 飞书入库** 章节（与主库 SOP 对齐）：落点与四张表 table_id、push_lark.py 用法、手工兜底命令、写入三张表字段清单、入库判定（含「检索与选题记录每轮必填」「凭据不可用要明确报告飞书未入库」）。
+- **README.md** —— 目录结构/脚本用法/交付物/依赖/已知限制/未覆盖项同步 push_lark。
+
+### 实测基线（2026-11-03）
+
+`--check` 四表全 PASS（题目库 42 / 训练任务库 35 / 检索与选题记录 0 / 知识点库 118）；`--dry-run` 对已存在题正确判 skip，知识点编号/去重键/任务号全部解析为 record_id，未向飞书写入任何数据。正式写入分支未实跑（涉及线上数据，需用户批准）。
+
 ## 1.0.0 — 2026-11-03
 
 初始封装。

@@ -133,6 +133,41 @@
 输入：最终清单。输出：TM-0000XX 编号入 items.ndjson + 今晚任务清单。
 判定：编号连续、题干指纹入库、清单文件带版本号（v2 等）。
 
+**P9-b 飞书入库（≤5 分钟，必须做）**：items.ndjson 只是本地快照，飞书多维表格才是正式题库。
+
+| 项 | 值 |
+|---|---|
+| 落点 | 云盘 `小兔中考 * 知识库` → 多维表格 **`2027广州中考·AI精准训练知识库`** |
+| app_token | `AWswbQsLQajsaMsvVQmcSyz3nPc` |
+| 题目库 table_id | `tblFlwLDZkzQX2Wq` |
+| 训练任务库 table_id | `tblFEVEPllFOztXp` |
+| 检索与选题记录 table_id | `tblS8boB3Zm90SHg`（**空表，选题必填**） |
+| 知识点库 table_id | `tblpUPaolJA7BL70` |
+
+**首选方式：`scripts/push_lark.py`**（幂等、自动续编号回查、record_id 真关联、题图自动上传）：
+
+```bash
+python scripts/push_lark.py --check                        # 连通性验证（可并入 P0）
+python scripts/push_lark.py --manifest lark.json --dry-run # 预览，不落库
+python scripts/push_lark.py --manifest lark.json --out push_result.json
+```
+
+manifest 格式见 `assets/lark_manifest_template.json`。写入顺序固定为 题目→任务→检索记录（检索记录要真关联任务 record_id）。题目ID/任务ID 是自动编号字段，由服务端分配，脚本写入后回查取得。
+
+手工兜底（脚本不可用时）：`lark-cli base +record-upsert --base-token <app> --table-id <tid> --json '{字段map}'`；题图用 `lark-cli base +record-upload-attachment --record-id <rid> --field-id 题目图片 --file <png>`。注意 `--json` 是顶层字段 map 不套 `fields`；select 传 `["中"]`；链接传 `[{"id":"recXXX"}]`；`api` 命令的 `--page-all` 会混入进度行破坏 JSON，分页一律用 `--params '{"page_size":500,"page_token":...}'`。
+
+写入三张表：
+1. **题目库**：题干、题目ID（自动编号）、学科、年级、关联知识点（关联到知识点库 record_id）、题目名称、题目图片、题型、难度、题目来源、年份、来源链接、标准答案、解题解析、审核状态（`待审核`）、训练状态（`未用`）、去重键、审核意见与评估明细。
+2. **检索与选题记录**（**每轮选题必填**，用于复盘检索质量）：检索批次ID、日期、训练目标、检索平台、原始提示词、提示词版本、筛选条件、结果数量、候选题链接与待核实资料、每题评估与淘汰原因、检索限制、关联训练任务、关联知识点、候选题、最终入选题。
+3. **训练任务库**：任务ID（自动编号）、任务名称、训练日期、学科、关联知识点、关联题目、训练目标、计划题量、目标正确率、预计用时(分钟)、任务状态、优先级与选择理由、目标难度与达成标准、完成期限。
+
+**入库判定**：
+- 回查题目库，用「题目ID + 去重键」确认写入成功、条数正确（push_lark.py 自动完成并输出结果 JSON）。
+- 关联知识点/关联题目必须真连上 record_id，不能只写文本。
+- 答案栏若为「独立验算·非一手」，**审核状态保持 `待审核`**，并在「审核意见与评估明细」写明"非一手答案，需人工核对后再对答案"。
+- 回查结果与本地 items.ndjson 一致（本地落后时以飞书为准并回导补齐）。
+- 飞书凭据不可用时（`lark-cli` 报 validation/auth 错误）→ **明确报告"飞书未入库"**，不静默跳过。注意：`lark-cli auth status` 在凭据外部注入环境下不可用，连通性一律以 `push_lark.py --check`（即 `api GET records`）为准。
+
 ---
 
 ## 第二章 用户交接协议（关键）

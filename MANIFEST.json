@@ -1,107 +1,119 @@
 {
   "name": "question-bank-selection",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "created": "2026-11-03",
   "changelog": {
-    "1.0.0": "初始封装：三站统一 SOP（站点矩阵 / P0–P9 / 用户交接协议 / 预算退出规则）+ 10 个纯标准库脚本，全部实测通过"
+    "1.0.0": "初始封装：三站统一 SOP（站点矩阵 / P0–P9 / 用户交接协议 / 预算退出规则）+ 10 个纯标准库脚本，全部实测通过",
+    "1.1.0": "补齐 P9-b 飞书入库：push_lark.py（幂等写三表+自动编号回查+record_id 真关联+题图上传）+ lark_manifest_template.json + SOP/SKILL/README 同步"
   },
   "source": "小兔中考 AI 知识库实战工作流固化：出卷网 / 菁优网 / 二一组卷网三站实测",
   "entry": "./SKILL.md",
   "runtime": {
-    "python": "3.14（仅标准库，无需第三方包）",
+    "python": "3.14（仅标准库，无需第三方包；push_lark.py 额外需 lark-cli）",
     "browser": "Chrome 或 Edge，需 --remote-debugging-port=9222（仅出卷网登录态与菁优网需要）",
-    "accounts": "出卷网需登录一次（免费账号，登录态存于专用 user-data-dir）；二一检索免登录；菁优网游客可读详情页"
+    "accounts": "出卷网需登录一次（免费账号，登录态存于专用 user-data-dir）；二一检索免登录；菁优网游客可读详情页",
+    "lark-cli": "仅 P9-b 飞书入库需要；凭据由环境外部注入；目标 Base 的 app_token/table_id 在 push_lark.py 头部常量中，换库需修改"
   },
   "files": {
     ".gitignore": {
       "sha256": "60c9bdd905fcf45ac485c680d32e9773962cf061b6f041dcddd033911558a672",
       "bytes": 29,
-      "lines": 4
+      "lines": 3
     },
     "CHANGELOG.md": {
-      "sha256": "31eb47bfeb1b9f9ef832f1273e0a306f86cf7557e8d8f9ef227adcb19d3f41ff",
-      "bytes": 2667,
-      "lines": 32
+      "sha256": "9038a3a59955ea910cf4e839d36624f14d7d3d73ac71e87d90de46ee97d3cb1a",
+      "bytes": 4587,
+      "lines": 50
     },
     "LICENSE": {
       "sha256": "b96768289b422ea1d24ca396e1f4a7dfe0a4e98a83f39f030e34aacda30fc978",
       "bytes": 1067,
-      "lines": 22
+      "lines": 21
     },
     "README.md": {
-      "sha256": "754ea4d9567ed6bb858464f817503b9d6418cf672ab5a5ac5098d8233099ccab",
-      "bytes": 8285,
-      "lines": 140
+      "sha256": "14958af2d98f8a22abd948e2f58e18e95b3a5a548d7b089aaf7421b286526334",
+      "bytes": 9717,
+      "lines": 151
     },
     "SKILL.md": {
-      "sha256": "e35c7b4a23644cf7d8ccaede7f5af27d884f9373bd1ed493f71ff4fab3995873",
-      "bytes": 7194,
-      "lines": 102
+      "sha256": "62c75f4147e10fe8fb8d7192b01a9a3167c82fd2dce1789848e62f699cbe03e6",
+      "bytes": 8613,
+      "lines": 106
+    },
+    "assets/lark_manifest_template.json": {
+      "sha256": "74afe39b3da5710ffcdcc4326e11388cd8e950adc032519536750486815fe4d4",
+      "bytes": 2746,
+      "lines": 61
     },
     "assets/manifest_template.json": {
       "sha256": "0ac6edd742f5761321daa501a778f19684e9b4f64734959045031bbe7434ed06",
       "bytes": 3032,
-      "lines": 47
+      "lines": 46
     },
     "references/三站检索SOP.md": {
-      "sha256": "29facc232b4c33cd6cda5dac6fde3d0ddf7697d281596b425af335d1e91a5d60",
-      "bytes": 24683,
-      "lines": 311
+      "sha256": "1d09ca2a27a76f5faf2ab1128d63ed7749207454e10702a8c5d4c4ecf10cba81",
+      "bytes": 28152,
+      "lines": 345
     },
     "references/站点矩阵.md": {
       "sha256": "5a6b99d3bcd21899a86353c509d62ae3944927720c5292fdfc59e1c2ec15e517",
       "bytes": 8127,
-      "lines": 93
+      "lines": 92
     },
     "scripts/build_html.py": {
       "sha256": "897ca0798f89f2ed3c27fb8ff3b3121a6814a316e6fc84cc9b60a0a586fa57a6",
       "bytes": 9000,
-      "lines": 214
+      "lines": 213
     },
     "scripts/cdp_client.py": {
       "sha256": "0eaa8453e930626bbb07e2018d96f9abf2120ab9cb5d611e6f76f93a70612492",
       "bytes": 9555,
-      "lines": 288
+      "lines": 287
     },
     "scripts/dedupe.py": {
       "sha256": "b30c05530f1cdeebcaea95299d81e78d6e70bafe9b37fafc4920ad4872f508dd",
       "bytes": 4188,
-      "lines": 144
+      "lines": 143
     },
     "scripts/fetch_21cnjy.py": {
       "sha256": "a087ce68bed79776b7158d08d52ace92bcade8ef06d2a07bada52003c0038db6",
       "bytes": 7339,
-      "lines": 209
+      "lines": 208
     },
     "scripts/launch_chrome.py": {
       "sha256": "f190307a50946f5bdfb812079c6931a0a3b58d459f49b23d807537b5d26a4413",
       "bytes": 3450,
-      "lines": 95
+      "lines": 94
     },
     "scripts/preflight.py": {
       "sha256": "9e4a7c5ba7b53ac27fde1a3610ae26a33a057017491d598d891cbad7d625944f",
       "bytes": 9174,
-      "lines": 239
+      "lines": 238
     },
     "scripts/probe_chujuan.py": {
       "sha256": "48411873b32724691084f235e2c52c6a7dfd4556f4101f04cb930752591d4ded",
       "bytes": 8218,
-      "lines": 225
+      "lines": 224
     },
     "scripts/probe_jyeoo.py": {
       "sha256": "1395b940d0874e0b5502ac307660113f272b1799ceced5ebcb3de9935666e350",
       "bytes": 9174,
-      "lines": 206
+      "lines": 205
+    },
+    "scripts/push_lark.py": {
+      "sha256": "b9255cda971ce415d1a225d7ccbc8824aa5b7441c302554ffb055b062a42c663",
+      "bytes": 13426,
+      "lines": 293
     },
     "scripts/search_21cnjy.py": {
       "sha256": "b1994ced73f5db88c8b79cb3114c6e7a84cd85f862a92e786a628b56b84b3894",
       "bytes": 5706,
-      "lines": 149
+      "lines": 148
     },
     "scripts/verify_calc.py": {
       "sha256": "972fec15826da2f7774f2e7f21e1d6c773161f76173285a3f4bc9329717d8e46",
       "bytes": 5100,
-      "lines": 163
+      "lines": 162
     }
   }
 }
