@@ -1,0 +1,102 @@
+{
+  "name": "question-bank-selection",
+  "version": "1.0.0",
+  "created": "2026-11-03",
+  "changelog": {
+    "1.0.0": "初始封装：三站统一 SOP（站点矩阵 / P0–P9 / 用户交接协议 / 预算退出规则）+ 10 个纯标准库脚本，全部实测通过"
+  },
+  "source": "小兔中考 AI 知识库实战工作流固化：出卷网 / 菁优网 / 二一组卷网三站实测",
+  "entry": "./SKILL.md",
+  "runtime": {
+    "python": "3.14（仅标准库，无需第三方包）",
+    "browser": "Chrome 或 Edge，需 --remote-debugging-port=9222（仅出卷网登录态与菁优网需要）",
+    "accounts": "出卷网需登录一次（免费账号，登录态存于专用 user-data-dir）；二一检索免登录；菁优网游客可读详情页"
+  },
+  "files": {
+    ".gitignore": {
+      "sha256": "60c9bdd905fcf45ac485c680d32e9773962cf061b6f041dcddd033911558a672",
+      "bytes": 29,
+      "lines": 4
+    },
+    "LICENSE": {
+      "sha256": "b96768289b422ea1d24ca396e1f4a7dfe0a4e98a83f39f030e34aacda30fc978",
+      "bytes": 1067,
+      "lines": 22
+    },
+    "README.md": {
+      "sha256": "754ea4d9567ed6bb858464f817503b9d6418cf672ab5a5ac5098d8233099ccab",
+      "bytes": 8285,
+      "lines": 140
+    },
+    "SKILL.md": {
+      "sha256": "c0cb75194adaedf8a38030602e05c7da403b99f877408d21e91cb7b89856b6a1",
+      "bytes": 7180,
+      "lines": 102
+    },
+    "assets/manifest_template.json": {
+      "sha256": "0ac6edd742f5761321daa501a778f19684e9b4f64734959045031bbe7434ed06",
+      "bytes": 3032,
+      "lines": 47
+    },
+    "references/三站检索SOP.md": {
+      "sha256": "9081721c79128c7fecc31f453d173d28df79bbbc5e933df2de82eadfd2f64e0f",
+      "bytes": 24621,
+      "lines": 311
+    },
+    "references/站点矩阵.md": {
+      "sha256": "5a6b99d3bcd21899a86353c509d62ae3944927720c5292fdfc59e1c2ec15e517",
+      "bytes": 8127,
+      "lines": 93
+    },
+    "scripts/build_html.py": {
+      "sha256": "897ca0798f89f2ed3c27fb8ff3b3121a6814a316e6fc84cc9b60a0a586fa57a6",
+      "bytes": 9000,
+      "lines": 214
+    },
+    "scripts/cdp_client.py": {
+      "sha256": "0eaa8453e930626bbb07e2018d96f9abf2120ab9cb5d611e6f76f93a70612492",
+      "bytes": 9555,
+      "lines": 288
+    },
+    "scripts/dedupe.py": {
+      "sha256": "b30c05530f1cdeebcaea95299d81e78d6e70bafe9b37fafc4920ad4872f508dd",
+      "bytes": 4188,
+      "lines": 144
+    },
+    "scripts/fetch_21cnjy.py": {
+      "sha256": "a087ce68bed79776b7158d08d52ace92bcade8ef06d2a07bada52003c0038db6",
+      "bytes": 7339,
+      "lines": 209
+    },
+    "scripts/launch_chrome.py": {
+      "sha256": "f190307a50946f5bdfb812079c6931a0a3b58d459f49b23d807537b5d26a4413",
+      "bytes": 3450,
+      "lines": 95
+    },
+    "scripts/preflight.py": {
+      "sha256": "9e4a7c5ba7b53ac27fde1a3610ae26a33a057017491d598d891cbad7d625944f",
+      "bytes": 9174,
+      "lines": 239
+    },
+    "scripts/probe_chujuan.py": {
+      "sha256": "48411873b32724691084f235e2c52c6a7dfd4556f4101f04cb930752591d4ded",
+      "bytes": 8218,
+      "lines": 225
+    },
+    "scripts/probe_jyeoo.py": {
+      "sha256": "1395b940d0874e0b5502ac307660113f272b1799ceced5ebcb3de9935666e350",
+      "bytes": 9174,
+      "lines": 206
+    },
+    "scripts/search_21cnjy.py": {
+      "sha256": "b1994ced73f5db88c8b79cb3114c6e7a84cd85f862a92e786a628b56b84b3894",
+      "bytes": 5706,
+      "lines": 149
+    },
+    "scripts/verify_calc.py": {
+      "sha256": "972fec15826da2f7774f2e7f21e1d6c773161f76173285a3f4bc9329717d8e46",
+      "bytes": 5100,
+      "lines": 163
+    }
+  }
+}
