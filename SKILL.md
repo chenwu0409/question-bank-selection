@@ -92,7 +92,7 @@ P0 预检 → P1 知识点转关键词 → P2 检索出候选（每训练点 ≥
 | `preflight.py` | 6.7s，FAIL 0、BLOCKED 2（二一答案墙 + district_id 不生效） |
 | `search_21cnjy.py` | 5.7s，「杠杆」×2 页 + 广东筛选 → 候选池 4 题（潮州/惠州/江门/深圳，全 diff=3） |
 | `fetch_21cnjy.py` | 3.9s，题干/小问/难度/试卷名全解析，题图落盘，`access=false` 正确标注非一手 |
-| `probe_chujuan.py` | 登录态 PASS（`133****8260`）；详情 200/41KB；一手解析图 + 3 张答案图下载成功 |
+| `probe_chujuan.py` | 登录态 PASS（页头显示已登录账号）；详情 200/41KB；一手解析图 + 3 张答案图下载成功 |
 | `probe_jyeoo.py` | 检索判定 WALL（题链 0，游客墙）；详情【考点】【答案】可提取，【解答】空；题图 5 张下载成功 |
 | `dedupe.py` | 同题干判「重复」1.00；改写题干判「全新」 |
 | `verify_calc.py` | 四例全通过，分数精确 |
