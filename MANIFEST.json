@@ -1,10 +1,11 @@
 {
   "name": "question-bank-selection",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "created": "2026-11-03",
   "changelog": {
     "1.0.0": "初始封装：三站统一 SOP（站点矩阵 / P0–P9 / 用户交接协议 / 预算退出规则）+ 10 个纯标准库脚本，全部实测通过",
-    "1.1.0": "补齐 P9-b 飞书入库：push_lark.py（幂等写三表+自动编号回查+record_id 真关联+题图上传）+ lark_manifest_template.json + SOP/SKILL/README 同步"
+    "1.1.0": "补齐 P9-b 飞书入库：push_lark.py（幂等写三表+自动编号回查+record_id 真关联+题图上传）+ lark_manifest_template.json + SOP/SKILL/README 同步",
+    "1.2.0": "新增上游联动入口：候选先落飞书，同轮交叉验收，放行后出卷。独立选题流程保留。"
   },
   "source": "小兔中考 AI 知识库实战工作流固化：出卷网 / 菁优网 / 二一组卷网三站实测",
   "entry": "./SKILL.md",
@@ -36,9 +37,9 @@
       "lines": 151
     },
     "SKILL.md": {
-      "sha256": "62c75f4147e10fe8fb8d7192b01a9a3167c82fd2dce1789848e62f699cbe03e6",
-      "bytes": 8613,
-      "lines": 106
+      "sha256": "c9c5879cf6459c1c96a522348f7f2309da86a58055c9aeeab628a892b065580e",
+      "bytes": 9985,
+      "lines": 114
     },
     "assets/lark_manifest_template.json": {
       "sha256": "74afe39b3da5710ffcdcc4326e11388cd8e950adc032519536750486815fe4d4",

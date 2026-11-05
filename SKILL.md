@@ -7,6 +7,14 @@ description: Select, verify, package exam questions from chujuan.cn, jyeoo.com, 
 
 从中文题库站检索、筛选、核验题目，产出「学生版 + 答案版 + 清单」三件套。默认三站：出卷网、菁优网、二一组卷网。
 
+## 与 Knowledge Mastery Planner 联动
+
+当任务引用飞书 RW、KMP 计划或上游放行记录时，使用 [联动协议](https://github.com/chenwu0409/knowledge-mastery-planner/blob/main/references/async-selection.md) 和其中的项目绑定。此入口的步骤优先于下方独立选题的 P8、P9 和 P9-b。
+
+1. **搜题阶段。** 从现有 RW 读取当前计划版本、搜索窗口、知识点和必测动作。按该计划的来源、难度和题量约束检索并独立初筛。将候选题和候选批次写入飞书，通过 Agent 在同一轮立即交给上游验收。交接时给 RW、计划版本和批次 ID。上游暂不可用时，以候选已落库、待验收结束本阶段。
+2. **制卷阶段。** 上游写入 `approved_for_pack` 后，由 Agent 重新调用本 Skill。重读放行记录，核对 RW 当前版本、批次、审核版本及允许的题目和小问，再制作学生版与答案版。按同一批次回写最终入选题和成品引用。若上游写 `needs_research`，按退回理由补搜、落库并重新交验。
+3. **飞书写入。** 联动时用可用的飞书连接器、API 或 CLI 按协议写候选、批次及已放行题包。旧 `push_lark.py` 适用于独立流程的整包入库，联动路径使用协议指定的字段写入。当前 KMP 计划和审核记录由上游维护。
+
 ## 开工前必做
 
 1. 读 `references/三站检索SOP.md`（完整流程 P0–P9、站点矩阵、预算与退出规则）。
@@ -56,13 +64,13 @@ description: Select, verify, package exam questions from chujuan.cn, jyeoo.com, 
 CDP 相关脚本要求专用 Chrome 已在 9222 运行：`python scripts/launch_chrome.py`（沙箱内需在沙箱外启动，否则进程被回收）。
 沙箱内启动 Chrome 会被回收，改用 `dangerouslyDisableSandbox` + `Invoke-WmiMethod -Class Win32_Process -Name Create`。
 
-## 流程（P0–P9 摘要）
+## 独立选题流程（P0–P9 摘要）
 
 P0 预检 → P1 知识点转关键词 → P2 检索出候选（每训练点 ≥8 道，中等难度 ≥40%）→ P3 批量抓详情（单题 2 次失败即弃）→ P4 题干题图解析（装置图放大 4x 复核）→ P5 查重 → P6 独立验算 → P7 匹配遴选（人工卡点，不为换而换）→ P8 学生版/答案版产出 → P9 入库建任务 → **P9-b 飞书多维表格入库（必做，`scripts/push_lark.py`）**。
 
 每步的输入/输出/判定标准/预算耗时见 `references/三站检索SOP.md` 第一章。
 
-## 交付物
+## 独立选题交付物
 
 1. **清单 Markdown**：题号、来源站与链接、难度、知识点、选用理由、备选说明、答案一手性标注。
 2. **学生版 HTML**：零答案零提示。交付前自检：全文检索「答案/解析/答：」必须 0 命中（`scripts/build_html.py` 内置）。
