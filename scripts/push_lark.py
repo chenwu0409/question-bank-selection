@@ -19,7 +19,7 @@ import os
 import json
 import time
 import argparse
-import subprocess
+from lark_client import lark, upload_attachments
 
 if __name__ == '__main__':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
@@ -32,25 +32,6 @@ T_KPS = 'tblpUPaolJA7BL70'         # 知识点库
 
 TABLE_NAMES = {T_QUESTIONS: '题目库', T_TASKS: '训练任务库',
                T_SEARCH: '检索与选题记录', T_KPS: '知识点库'}
-
-
-def lark(args_list, timeout=120):
-    """跑一条 lark-cli，返回解析后的 JSON dict；失败抛 RuntimeError。"""
-    try:
-        p = subprocess.run(['lark-cli'] + args_list, capture_output=True,
-                           text=True, encoding='utf-8', timeout=timeout)
-    except FileNotFoundError:
-        raise RuntimeError('lark-cli 不在 PATH → 飞书未入库，请确认 lark 插件已安装')
-    out = (p.stdout or '') + (p.stderr or '')
-    try:
-        d = json.loads(out)
-    except Exception:
-        raise RuntimeError('lark-cli 输出无法解析: %s' % out[:200])
-    if not d.get('ok'):
-        err = d.get('error') or {}
-        raise RuntimeError('lark-cli 调用失败(%s/%s): %s' % (
-            err.get('type'), err.get('subtype'), err.get('message', '')[:200]))
-    return d
 
 
 def list_all_records(tid):
@@ -174,12 +155,7 @@ def push_questions(manifest, q_idx, kp_idx, dry):
         have = {a.get('name') for a in (rec['fields'].get('题目图片') or [])} if rec else set()
         todo = [p for p in imgs if os.path.basename(p) not in have]
         if rec and todo:
-            args = ['base', '+record-upload-attachment', '--base-token', APP_TOKEN,
-                    '--table-id', T_QUESTIONS, '--record-id', rec['record_id'],
-                    '--field-id', '题目图片']
-            for pth in todo:
-                args += ['--file', pth]
-            lark(args, timeout=300)
+            upload_attachments(APP_TOKEN, T_QUESTIONS, rec['record_id'], '题目图片', todo)
             print('[OK] %s 题图 %d 张已上传' % (r['题目ID'], len(todo)))
     return results
 

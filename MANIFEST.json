@@ -1,11 +1,12 @@
 {
   "name": "question-bank-selection",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "created": "2026-11-03",
   "changelog": {
     "1.0.0": "初始封装：三站统一 SOP（站点矩阵 / P0–P9 / 用户交接协议 / 预算退出规则）+ 10 个纯标准库脚本，全部实测通过",
     "1.1.0": "补齐 P9-b 飞书入库：push_lark.py（幂等写三表+自动编号回查+record_id 真关联+题图上传）+ lark_manifest_template.json + SOP/SKILL/README 同步",
-    "1.2.0": "新增上游联动入口：候选先落飞书，同轮交叉验收，放行后出卷。独立选题流程保留。"
+    "1.2.0": "新增上游联动入口：候选先落飞书，同轮交叉验收，放行后出卷。独立选题流程保留。",
+    "1.3.0": "锁定上游契约版本，统一附件结果，增加按创建清单清理及动作重叠提示。"
   },
   "source": "小兔中考 AI 知识库实战工作流固化：出卷网 / 菁优网 / 二一组卷网三站实测",
   "entry": "./SKILL.md",
@@ -37,9 +38,9 @@
       "lines": 151
     },
     "SKILL.md": {
-      "sha256": "c9c5879cf6459c1c96a522348f7f2309da86a58055c9aeeab628a892b065580e",
-      "bytes": 9985,
-      "lines": 114
+      "sha256": "e1245472ffdbcda39d0c5a8da678dfead316cb316300e3c988017fc36200a791",
+      "bytes": 8891,
+      "lines": 110
     },
     "assets/lark_manifest_template.json": {
       "sha256": "74afe39b3da5710ffcdcc4326e11388cd8e950adc032519536750486815fe4d4",
@@ -102,9 +103,9 @@
       "lines": 205
     },
     "scripts/push_lark.py": {
-      "sha256": "b9255cda971ce415d1a225d7ccbc8824aa5b7441c302554ffb055b062a42c663",
-      "bytes": 13426,
-      "lines": 293
+      "sha256": "44ffba662a6204e35fb40746cb863a00be0b0bb66f73f53292fd13d981aed403",
+      "bytes": 12422,
+      "lines": 269
     },
     "scripts/search_21cnjy.py": {
       "sha256": "b1994ced73f5db88c8b79cb3114c6e7a84cd85f862a92e786a628b56b84b3894",
@@ -115,6 +116,31 @@
       "sha256": "972fec15826da2f7774f2e7f21e1d6c773161f76173285a3f4bc9329717d8e46",
       "bytes": 5100,
       "lines": 162
+    },
+    "references/upstream-contract.md": {
+      "sha256": "8446d8fd40d55ca3fd352871bca6c792d751939e4906b192f51a13a87a1f30cb",
+      "bytes": 2812,
+      "lines": 36
+    },
+    "scripts/lark_client.py": {
+      "sha256": "3dcbd354aa216a76cb9d07f54cba67700e119cc3e8182515516bc23fe6dbe209",
+      "bytes": 1963,
+      "lines": 50
+    },
+    "scripts/cleanup_test_records.py": {
+      "sha256": "35051e8471d450ce5623c766bd61a78d9eb6704fe2529a634fb92197a5d5a031",
+      "bytes": 5387,
+      "lines": 115
+    },
+    "scripts/action_overlap.py": {
+      "sha256": "05b1de55209435400469eb32859a7e1279f976798efc2fe86a2a199075afb9c4",
+      "bytes": 817,
+      "lines": 19
+    },
+    "tests/test_linked_tools.py": {
+      "sha256": "90c72dfd307176cfba49f82e376391096ec2478b3e4c5735b72538065d847ae0",
+      "bytes": 3783,
+      "lines": 70
     }
   }
 }

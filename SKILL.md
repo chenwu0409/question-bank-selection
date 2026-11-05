@@ -9,11 +9,7 @@ description: Select, verify, package exam questions from chujuan.cn, jyeoo.com, 
 
 ## 与 Knowledge Mastery Planner 联动
 
-当任务引用飞书 RW、KMP 计划或上游放行记录时，使用 [联动协议](https://github.com/chenwu0409/knowledge-mastery-planner/blob/main/references/async-selection.md) 和其中的项目绑定。此入口的步骤优先于下方独立选题的 P8、P9 和 P9-b。
-
-1. **搜题阶段。** 从现有 RW 读取当前计划版本、搜索窗口、知识点和必测动作。按该计划的来源、难度和题量约束检索并独立初筛。将候选题和候选批次写入飞书，通过 Agent 在同一轮立即交给上游验收。交接时给 RW、计划版本和批次 ID。上游暂不可用时，以候选已落库、待验收结束本阶段。
-2. **制卷阶段。** 上游写入 `approved_for_pack` 后，由 Agent 重新调用本 Skill。重读放行记录，核对 RW 当前版本、批次、审核版本及允许的题目和小问，再制作学生版与答案版。按同一批次回写最终入选题和成品引用。若上游写 `needs_research`，按退回理由补搜、落库并重新交验。
-3. **飞书写入。** 联动时用可用的飞书连接器、API 或 CLI 按协议写候选、批次及已放行题包。旧 `push_lark.py` 适用于独立流程的整包入库，联动路径使用协议指定的字段写入。当前 KMP 计划和审核记录由上游维护。
+当任务引用飞书 RW、KMP 计划或上游放行记录时，先读 [上游契约入口](references/upstream-contract.md)。联动路径按契约执行，独立选题的 P8、P9 和 P9-b 用于独立流程。
 
 ## 开工前必做
 
