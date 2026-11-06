@@ -7,15 +7,16 @@
 
 读取这个提交中的契约及校验器，再按当前 RW、版本、批次及审核轮次接续。补搜理由只读任务复盘当前 delivery。题目侧可以保留 RW 与批次指针。无法读取固定版本或校验失败时，保留待验收或待制卷状态。
 
-## 共识 v1 补充（2026-11-06，一周实测后修订）
+## 共识 v2 补充（2026-11-06，17 题实测后修订）
 
-本节与固定版本契约同时生效，冲突时以本节为准：
+本节与固定版本契约同时生效；固定提交仍是 v1 条文（「同一轮最多补搜一次」、三步降级），与本节冲突时以本节为准。
 
-- 题目库、候选题与最终入选题只有下游写；上游只读校验。
-- 补搜上限取 plan 的 `research_round_limit`（默认 2）。达上限后按上游 `degradation` 的三步处置（放宽难度档 → 换同知识点邻近题 → 证据不足人工介入），不得继续补搜，不得自行降级。
-- 验收 `checks` 六项（必测动作、难度档、配图、答案可验算、去重键、科目配比）逐项给 `pass` / `fail` / `unknown`，禁止「基本符合」「大致达标」这类表述。历史已写入的旧 delivery 不追溯校验，校验器标 `legacy_no_checks`。
+- 题目库、「选题候选」表（`tblXi52Q07kUbdr5`）与最终入选题只有下游写；上游只读校验。候选状态机：`待复核`/`已放行`/`已采用`/`已弃用`，六项 checks 逐项 `pass`/`fail`/`unknown`。
+- 补搜上限取 plan 的 `research_round_limit`（默认 2）。达上限后按上游 `degradation` v2 路径处置：① 换情境不换知识点 → ② 换源/补题面 → ③ 上游显式重定目标层级（写 `level_change` 并升 `plan_version`）→ ④ 交人工。**禁止为凑层级把 L3 降到易档，禁止下游自行换 ZSD**，不得自行降级。
+- `needs_evidence` 出口：题面截断、图不可读、平台无答案、答案墙 → 写 `evidence_gaps`（类型+题号+细节），退回补题面或换源；不进入补搜循环、不消耗补搜轮次、不触发 `degradation`。
+- 验收 `checks` 六项（必测动作、难度档、配图、答案可验算、去重键、科目配比）逐项给 `pass` / `fail` / `unknown`，禁止「基本符合」「大致达标」这类表述。配图按 `image_requirement` 三档判；答案先标 `answer_source`；去重键须报「重复/结构重复/全新」，结构重复须上游 `dedupe_exception` 说明新增动作才可放行；允许小问级或整题级，整题级写 `merged_subquestions`。
 - 交候选不等于交结果：上游按 `task_id` / `batch_id` / `TM` 回库回读后才放行。
-- 状态只认 `approved_for_pack` / `needs_research` / `scope_hold` 三种。
+- 状态只认 `approved_for_pack` / `needs_research` / `needs_evidence` / `scope_hold` 四种。
 
 ## 下游工具
 

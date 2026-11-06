@@ -1,3 +1,6 @@
 __pycache__/
 *.pyc
 .DS_Store
+# 本地登录态 / 凭据：只允许放未跟踪目录，禁止提交
+session*.json
+*cookies*.json
