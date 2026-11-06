@@ -11,6 +11,14 @@ description: Select, verify, package exam questions from chujuan.cn, jyeoo.com, 
 
 当任务引用飞书 RW、KMP 计划或上游放行记录时，先读 [上游契约入口](references/upstream-contract.md)。联动路径按契约执行，独立选题的 P8、P9 和 P9-b 用于独立流程。
 
+### 共识 v1 执行规则（2026-11-06，一周实测后修订）
+
+- **单写权**：题目库、「检索与选题记录」和训练任务的入题只有本 Skill 写；上游只读校验。绝不代上游写 `[KMP/plan/v1]` 或 `[KMP/delivery/v1]`。
+- **补搜上限**：按 plan 的 `research_round_limit`（默认 2）。收到 `needs_research` 后开新批次槽并记录 `supersedes_batch_id`；达上限后**不得再搜**，按上游 delivery 的 `degradation` 执行（放宽难度档 → 换同知识点邻近题 → 证据不足人工介入），降级原因随候选一并回写。本 Skill 不得自行降级、不得改 `plan_version`。
+- **复核字段化**：交候选时按 `checks` 六项自检并在清单逐项写 `pass` / `fail` / `unknown`：必测动作、难度档、配图、答案可验算、去重键、科目配比。禁用「基本符合」「大致达标」「大体满足」等模糊表述。历史已写入的旧 delivery 不追溯校验。
+- **回读**：写库后回读条数、关联、状态；上游复核会按 `task_id` / `batch_id` / `TM` 回库核对，交清单不等于交结果。
+- **状态语义**：`[KMP/plan/v1]` 是上游条件（`state=ready` 才可搜）；`[KMP/delivery/v1]` 是上游结论，只有 `approved_for_pack` 才能制卷，`needs_research` 只能补搜，`scope_hold` 只能保留候选。
+
 ## 开工前必做
 
 1. 读 `references/三站检索SOP.md`（完整流程 P0–P9、站点矩阵、预算与退出规则）。

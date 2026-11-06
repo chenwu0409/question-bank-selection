@@ -2,10 +2,20 @@
 
 联动使用同一份正式契约。仓库版和本地超集都从这里进入。升级时只替换本入口并验证新契约，本地独有 SOP 继续放在原文件。
 
-- [Knowledge Mastery Planner 联动契约](https://github.com/chenwu0409/knowledge-mastery-planner/blob/0b2f09876ba497c345a8f97f5d2014bfff751ed4/references/async-selection.md)
-- [KMP v1 schema](https://github.com/chenwu0409/knowledge-mastery-planner/blob/0b2f09876ba497c345a8f97f5d2014bfff751ed4/schemas/kmp-v1.json)
+- [Knowledge Mastery Planner 联动契约](https://github.com/chenwu0409/knowledge-mastery-planner/blob/9ad6e07ab5c82940c9793c2aa590ba8cbc19258f/references/async-selection.md)
+- [KMP v1 schema](https://github.com/chenwu0409/knowledge-mastery-planner/blob/9ad6e07ab5c82940c9793c2aa590ba8cbc19258f/schemas/kmp-v1.json)
 
 读取这个提交中的契约及校验器，再按当前 RW、版本、批次及审核轮次接续。补搜理由只读任务复盘当前 delivery。题目侧可以保留 RW 与批次指针。无法读取固定版本或校验失败时，保留待验收或待制卷状态。
+
+## 共识 v1 补充（2026-11-06，一周实测后修订）
+
+本节与固定版本契约同时生效，冲突时以本节为准：
+
+- 题目库、候选题与最终入选题只有下游写；上游只读校验。
+- 补搜上限取 plan 的 `research_round_limit`（默认 2）。达上限后按上游 `degradation` 的三步处置（放宽难度档 → 换同知识点邻近题 → 证据不足人工介入），不得继续补搜，不得自行降级。
+- 验收 `checks` 六项（必测动作、难度档、配图、答案可验算、去重键、科目配比）逐项给 `pass` / `fail` / `unknown`，禁止「基本符合」「大致达标」这类表述。历史已写入的旧 delivery 不追溯校验，校验器标 `legacy_no_checks`。
+- 交候选不等于交结果：上游按 `task_id` / `batch_id` / `TM` 回库回读后才放行。
+- 状态只认 `approved_for_pack` / `needs_research` / `scope_hold` 三种。
 
 ## 下游工具
 
